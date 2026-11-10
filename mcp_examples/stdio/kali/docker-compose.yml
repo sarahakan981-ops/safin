@@ -1,0 +1,21 @@
+services:
+  rootagent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rootagent_with_kali_mcp
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - ROOTAGENT_MODEL=${ROOTAGENT_MODEL}
+      - ROOTAGENT_DEBUG=${ROOTAGENT_DEBUG:-false}
+    
+    networks:
+      - rootagent-net
+    stdin_open: true
+    tty: true
+
+
+networks:
+  rootagent-net:
+    driver: bridge

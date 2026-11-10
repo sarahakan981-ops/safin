@@ -1,0 +1,20 @@
+services:
+  rootagent:
+    image: ghcr.io/sarahakan981-ops/rootagent:latest
+    container_name: rootagent_with_n8n_mcp
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - ROOTAGENT_MODEL=${ROOTAGENT_MODEL}
+      - ROOTAGENT_DEBUG=${ROOTAGENT_DEBUG:-false}
+    volumes:
+      - ./mcp_servers.json:/app/mcp_servers.json
+    networks:
+      - rootagent-net
+    stdin_open: true
+    tty: true
+
+
+networks:
+  rootagent-net:
+    driver: bridge

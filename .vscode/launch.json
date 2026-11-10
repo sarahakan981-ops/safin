@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug rootagent (module)",
+      "type": "python",
+      "request": "launch",
+      "module": "rootagent",
+      "cwd": "/app",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "MCP Server + TUI (SSE)",
+      "type": "python",
+      "request": "launch",
+      "module": "rootagent",
+      "args": [
+        "mcp_server",
+        "--type", "sse",
+        "--tui",
+        "--port", "8080"
+      ],
+      "cwd": "/app",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    }
+  ]
+}

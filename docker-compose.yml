@@ -1,0 +1,80 @@
+services:
+  rootagent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rootagent:latest
+    container_name: rootagent
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_API_BASE=${OPENAI_API_BASE:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - ROOTAGENT_MODEL=${ROOTAGENT_MODEL}
+      - ROOTAGENT_EMBEDDINGS=${ROOTAGENT_EMBEDDINGS:-}
+      - ROOTAGENT_DEBUG=${ROOTAGENT_DEBUG:-false}
+    volumes:
+      - ./loot:/app/loot
+    networks:
+      - rootagent-net
+    stdin_open: true
+    tty: true
+
+  rootagent-kali:
+    build:
+      context: .
+      dockerfile: Dockerfile.kali
+    container_name: rootagent-kali
+    privileged: true  # Required for VPN and some tools. NOTE: this is risky on shared hosts; prefer running inside a disposable VM.
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_API_BASE=${OPENAI_API_BASE:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - ROOTAGENT_MODEL=${ROOTAGENT_MODEL}
+      - ROOTAGENT_EMBEDDINGS=${ROOTAGENT_EMBEDDINGS:-}
+      - ENABLE_TOR=${ENABLE_TOR:-false}
+      - INIT_METASPLOIT=${INIT_METASPLOIT:-false}
+      # By default msfrpcd binds to loopback; to intentionally expose Metasploit RPC to the host
+      # set EXPOSE_MSF_RPC=true in your environment. This is NOT recommended on shared machines.
+      - EXPOSE_MSF_RPC=${EXPOSE_MSF_RPC:-false}
+    volumes:
+      - ./loot:/app/loot
+    networks:
+      - rootagent-net
+    stdin_open: true
+    tty: true
+    profiles:
+      - kali
+
+  rootagent-kali-arm64:
+    build:
+      context: .
+      dockerfile: Dockerfile.kali
+    container_name: rootagent-kali-arm64
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_API_BASE=${OPENAI_API_BASE:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - ROOTAGENT_MODEL=${ROOTAGENT_MODEL}
+      - ROOTAGENT_EMBEDDINGS=${ROOTAGENT_EMBEDDINGS:-}
+      - ENABLE_TOR=${ENABLE_TOR:-false}
+      - INIT_METASPLOIT=${INIT_METASPLOIT:-false}
+      - EXPOSE_MSF_RPC=${EXPOSE_MSF_RPC:-false}
+    volumes:
+      - ./loot:/app/loot
+    networks:
+      - rootagent-net
+    stdin_open: true
+    tty: true
+    profiles:
+      - kali-arm64
+
+networks:
+  rootagent-net:
+    driver: bridge
