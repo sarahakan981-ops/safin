@@ -5,9 +5,11 @@
 # RootAgent
 ### AI Penetration Testing
 
-<a href="https://github.com/sarahakan981-ops/safin" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/Repository-sarahakan981--ops%2Fsafin-blue?style=for-the-badge&logo=github" width="250" height="55"/></a>
-
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/) [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.txt) [![Version](https://img.shields.io/badge/Version-0.2.0-orange.svg)](https://github.com/sarahakan981-ops/safin/releases) [![Security](https://img.shields.io/badge/Security-Penetration%20Testing-red.svg)](https://github.com/sarahakan981-ops/safin) [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://github.com/sarahakan981-ops/safin)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.txt)
+[![Version](https://img.shields.io/badge/Version-0.2.0-orange.svg)](https://github.com/sarahakan981-ops/safin/releases)
+[![Security](https://img.shields.io/badge/Security-Penetration%20Testing-red.svg)](https://github.com/sarahakan981-ops/safin)
+[![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://github.com/sarahakan981-ops/safin)
 
 </div>
 
@@ -21,7 +23,7 @@
 ```bash
 # Clone
 git clone https://github.com/sarahakan981-ops/safin.git
-cd rootagent
+cd safin
 
 # Setup (creates venv, installs deps)
 .\scripts\setup.ps1   # Windows
@@ -51,20 +53,19 @@ OPENAI_API_KEY=sk-...
 ROOTAGENT_MODEL=gpt-5
 ```
 
-Any [LiteLLM-supported model](https://docs.litellm.ai/docs/providers) works.
+Any LiteLLM-supported model works.
 
 ### Using a relay / custom API base
 
 Point RootAgent at any OpenAI-compatible endpoint via `OPENAI_API_BASE`:
 
-```bash
+```
 OPENAI_API_KEY=your-relay-token
 OPENAI_API_BASE=https://relay.example/v1
 ROOTAGENT_MODEL=openai/<model-name-on-your-relay>
 ```
 
-For Anthropic-compatible endpoints use `ANTHROPIC_API_BASE` instead.
-See `.env.example` for full provider notes and embedding options.
+For Anthropic-compatible endpoints use `ANTHROPIC_API_BASE` instead. See `.env.example` for full provider notes and embedding options.
 
 ## Run
 
@@ -158,8 +159,6 @@ RootAgent includes prebuilt **attack playbooks** for black-box security testing.
 rootagent run -t example.com --playbook thp3_web
 ```
 
-![Playbook Demo](assets/playbook.gif)
-
 ## Tools
 
 RootAgent includes built-in tools and supports MCP (Model Context Protocol) for extensibility.
@@ -210,7 +209,7 @@ Beyond the automatic `spawn_mcp_agent` tool, the TUI exposes two commands that l
 /spawn [target] [--scope CIDR ...] [--model MODEL] [--no-rag] [--no-mcp]
 ```
 
-Spawns a new child MCP agent over stdio and attaches it to the current session. The child appears as a collapsible terminal panel in the TUI sidebar and its tools become available to the parent agent on the next tool call.
+Spawns a new child MCP agent over stdio and attaches it to the current session.
 
 | Argument | Description |
 |----------|-------------|
@@ -259,13 +258,11 @@ Embeddings are computed once at startup and cached, so repeated queries are fast
 
 > **Tip:** Pass one query per distinct capability rather than combining everything into one query. `["list open ports on a host", "get process memory usage"]` retrieves better results than `["list ports and memory and CPU"]`.
 
-### MCP Integration
+## MCP Integration
 
 RootAgent supports MCP (Model Context Protocol) in two directions: **consuming** external MCP servers as tool sources, and **exposing itself** as an MCP server so external clients (Claude Desktop, Cursor, etc.) can drive RootAgent programmatically.
 
----
-
-#### Consuming External MCP Servers (Client Mode)
+### Consuming External MCP Servers (Client Mode)
 
 Configure `mcp_servers.json` to connect RootAgent to any external MCP servers. Example config:
 
@@ -283,9 +280,7 @@ Configure `mcp_servers.json` to connect RootAgent to any external MCP servers. E
 }
 ```
 
----
-
-#### Exposing RootAgent as an MCP Server (Server Mode)
+### Exposing RootAgent as an MCP Server (Server Mode)
 
 RootAgent can run as an MCP server, allowing any MCP-compatible client to submit tasks, inspect results, and control the agent remotely. Two transports are supported:
 
@@ -321,7 +316,7 @@ The SSE transport exposes a single `/mcp` endpoint supporting `POST` (requests),
 | `--no-rag` | false | Skip RAG engine initialisation |
 | `--no-mcp` | false | Skip external MCP server connections |
 
-##### Example: Claude Desktop config (`claude_desktop_config.json`)
+**Example: Claude Desktop config (`claude_desktop_config.json`)**
 
 ```json
 {
@@ -334,9 +329,7 @@ The SSE transport exposes a single `/mcp` endpoint supporting `POST` (requests),
 }
 ```
 
----
-
-#### MCP Server Tools Reference
+### MCP Server Tools Reference
 
 When acting as an MCP server, RootAgent exposes the following tools:
 
@@ -378,8 +371,6 @@ When acting as an MCP server, RootAgent exposes the following tools:
 | `enable_tool` | Enable a named tool on the primary agent |
 | `disable_tool` | Disable a named tool on the primary agent |
 
-
-
 **Conversation History**
 
 | Tool | Description |
@@ -402,9 +393,7 @@ When acting as an MCP server, RootAgent exposes the following tools:
 | `get_logs` | Return recent execution logs, optionally filtered by level (`info` / `warning` / `error`) |
 | `get_metrics` | Runtime metrics: task counts, success rate, total tool calls, memory and log sizes |
 
----
-
-#### Async Task Workflow Example
+### Async Task Workflow Example
 
 For long-running recon tasks, use the async pattern:
 
@@ -420,8 +409,6 @@ await_tasks  task_ids=["<id1>", "<id2>"]  timeout_seconds=300
 get_task_result  task_id="<id1>"
 get_task_result  task_id="<id2>"
 ```
-
----
 
 ### CLI Tool Management
 
@@ -450,8 +437,6 @@ Click **>> fork** on any user message to branch the conversation from that point
 
 This lets you try an alternative approach from any point while keeping the original thread retrievable via `/conversations`.
 
----
-
 ## Conversation History
 
 RootAgent automatically persists every conversation so you can review, compare, and restore past sessions.
@@ -465,9 +450,6 @@ RootAgent automatically persists every conversation so you can review, compare, 
 The `/conversations` command opens a split-pane modal inside the TUI:
 - **Left panel** — list of saved conversations with title and date.
 - **Right panel** — metadata preview plus the first 5 messages (user messages in blue, agent responses in green, tool calls in yellow, tool results in grey). A count shows how many additional messages exist.
-
-<img width="1657" height="662" alt="imagen" src="https://github.com/user-attachments/assets/da42f083-9b7f-445e-8c59-2402ac8e5ddc" />
-
 
 Select a conversation and press **Restore** to reload it into the current session, or **Close** to dismiss the modal.
 
